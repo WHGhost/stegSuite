@@ -55,6 +55,16 @@ def steg_alterbits(cover, stream, mask):
     raise CoverError("Cover and masks were to small to hide the stream")
 
 
+def steg_lsb(cover, stream):
+    #TODO tests
+    """
+    Calls steg_alterbits to encode the stream in the least significant bits of the cover
+    
+    :param cover bytearray: The medium where to hide the data
+    :param stream bytearray or bytes: The data to hide whitin the medium 
+    """
+    steg_alterbits(cover, stream, 1)
+
 class CoverError(Exception):
 
     pass
