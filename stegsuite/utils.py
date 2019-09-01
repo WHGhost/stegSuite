@@ -1,11 +1,11 @@
 import types
 
-def steg_alterbits(cover, stream, mask):
+def steg_encode_alterbits(cover, stream, mask):
     """
     Alter the specified bits from cover to hide stream in a lsb steganography way
 
     :param cover bytearray: The medium where to hide the data
-    :param stream bytearray or bytes: The data to hide whitin the medium 
+    :param stream bytearray or bytes: The data to hide whithin the cover 
     :param mask function or iterable: indicates which bits should be changed, it can be:
         - A function taking as arguments the cover and the index of the byte being alterred
           (note that the preceding bytes will already have been changed), and returning the mask
@@ -55,15 +55,15 @@ def steg_alterbits(cover, stream, mask):
     raise CoverError("Cover and masks were to small to hide the stream")
 
 
-def steg_lsb(cover, stream):
+def steg_encode_lsb(cover, stream):
     #TODO tests
     """
     Calls steg_alterbits to encode the stream in the least significant bits of the cover
     
     :param cover bytearray: The medium where to hide the data
-    :param stream bytearray or bytes: The data to hide whitin the medium 
+    :param stream bytearray or bytes: The data to hide in the cover
     """
-    steg_alterbits(cover, stream, 1)
+    steg_encode_alterbits(cover, stream, 1)
 
 class CoverError(Exception):
 
