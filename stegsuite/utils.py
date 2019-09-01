@@ -1,6 +1,7 @@
 import types
 
 def steg_encode_alterbits(cover, stream, mask):
+
     """
     Alter the specified bits from cover to hide stream in a lsb steganography way
 
@@ -52,19 +53,72 @@ def steg_encode_alterbits(cover, stream, mask):
                 else:
                     stream_bit_index += 1
         cover[byte_index] = cover_byte
-    raise CoverError("Cover and masks were to small to hide the stream")
+    raise CoverError("Cover and masks were too small to hide the stream")
 
 
 def steg_encode_lsb(cover, stream):
+
     #TODO tests
+    
     """
     Calls steg_alterbits to encode the stream in the least significant bits of the cover
     
     :param cover bytearray: The medium where to hide the data
     :param stream bytearray or bytes: The data to hide in the cover
     """
+    
     steg_encode_alterbits(cover, stream, 1)
 
-class CoverError(Exception):
 
+def steg_decode_alterbits(stream, mask, limit=None, padding=False):
+
+    #TODO tests
+    #TODO Docstring
+
+    if type(stream) not in (bytearray, bytes):
+        raise TypeError("Stream should be bytes or bytearray")
+
+    if callable(mask):
+        gen = mask
+    elif type(mask) == int:
+        def gen(stream, position):
+            return mask
+    else:
+        try:
+            if len(mask) < len(stream):
+                raise ValueError("Mask length should be at least the length of the stream")
+            else:
+                def gen(stream, position):
+                    return mask[position]
+        except:
+            raise TypeError("Invalid type for mask")
+    
+    hidden = bytearray()
+    buff = 0
+    buff_counter = 0
+    for byte_index, byte in enumerate(stream):
+        m = gen(stream, byte_index)
+        for bit_index in range(8):
+            bit_shift = 7 - bit_index
+            if m & (1 << bit_shift) != 0:
+                buff <<= 1
+                buff += (byte >> bitshift) & 1
+                buff_counter += 1
+                if buff_counter == 8:
+                    if limit != None and len(hidden) > limit:
+                        return hidden
+                    hidden.append(buff)
+                    buff = 0
+                    buff_counter = 0
+    if buff_counter != 0:
+        if not padding:
+            raise BitCountError("The number of bits to decode was not a multiple of 8")
+        else:
+            buff << (7 - buff_counter)
+            hidden.append(buff)
+    return hidden
+
+
+
+class CoverError(Exception):
     pass
